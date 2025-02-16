@@ -85,12 +85,7 @@ class DeviceFacade:
         self.device_id = device_id
         self.app_id = app_id
         try:
-            if device_id is None or "." not in device_id:
-                self.deviceV2 = uiautomator2.connect(
-                    "" if device_id is None else device_id
-                )
-            else:
-                self.deviceV2 = uiautomator2.connect_adb_wifi(f"{device_id}")
+            self.deviceV2 = uiautomator2.connect("" if device_id is None else device_id)
         except ImportError:
             raise ImportError("Please install uiautomator2: pip3 install uiautomator2")
 
