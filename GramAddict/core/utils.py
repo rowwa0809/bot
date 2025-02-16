@@ -239,10 +239,7 @@ def open_instagram(device):
     logger.info("Open Instagram app.")
 
     def call_ig():
-        try:
-            return device.deviceV2.app_start(app_id, use_monkey=True)
-        except uiautomator2.exceptions.BaseError as exc:
-            return exc
+        return device.deviceV2.app_start(app_id, use_monkey=True)
 
     err = call_ig()
     if err:
