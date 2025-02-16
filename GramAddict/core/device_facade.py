@@ -229,20 +229,6 @@ class DeviceFacade:
             )
             return None
 
-    def is_alive(self):
-        try:
-            return self.deviceV2._is_alive()  # deprecated method
-        except AttributeError:
-            return self.deviceV2.server.alive
-
-    def wake_up(self):
-        """Make sure agent is alive or bring it back up before starting."""
-        if self.deviceV2 is not None:
-            attempts = 0
-            while not self.is_alive() and attempts < 5:
-                self.get_info()
-                attempts += 1
-
     def unlock(self):
         self.swipe(Direction.UP, 0.8)
         sleep(2)
@@ -254,12 +240,6 @@ class DeviceFacade:
 
     def screen_off(self):
         self.deviceV2.screen_off()
-
-    def get_orientation(self):
-        try:
-            return self.deviceV2._get_orientation()
-        except uiautomator2.JSONRPCError as e:
-            raise DeviceFacade.JsonRpcError(e)
 
     def window_size(self):
         """return (width, height)"""

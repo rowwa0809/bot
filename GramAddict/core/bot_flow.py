@@ -127,7 +127,6 @@ def start_bot(**kwargs):
         session_state.set_limits_session()
         sessions.append(session_state)
         check_screen_timeout()
-        device.wake_up()
         head_up_notifications(enabled=False)
         logger.info(
             "-------- START: "
