@@ -71,7 +71,7 @@ def run_safely(device, device_id, sessions, session_state, screen_record, config
                 )
 
             except (
-                DeviceFacade.JsonRpcError,
+                DeviceFacade.HTTPError,
                 IndexError,
                 HTTPException,
                 timeout,
