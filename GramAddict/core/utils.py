@@ -19,7 +19,6 @@ from urllib.parse import urlparse
 
 import emoji
 import requests
-import uiautomator2.exceptions
 import urllib3
 from colorama import Fore, Style
 from packaging.version import parse as parse_version
