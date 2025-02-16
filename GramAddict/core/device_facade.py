@@ -11,6 +11,12 @@ from time import sleep
 from typing import Optional
 
 import uiautomator2
+from uiautomator2.exceptions import (
+    HTTPError,
+    HierarchyEmptyError,
+    AdbShellError,
+    AdbBroadcastError,
+)
 
 from GramAddict.core.utils import random_sleep
 
@@ -92,8 +98,8 @@ class DeviceFacade:
     def _get_current_app(self):
         try:
             return self.deviceV2.app_current()["package"]
-        except uiautomator2.JSONRPCError as e:
-            raise DeviceFacade.JsonRpcError(e)
+        except HTTPError as e:
+            raise DeviceFacade.HTTPError(e)
 
     def _ig_is_opened(self) -> bool:
         return self._get_current_app() == self.app_id
@@ -118,8 +124,8 @@ class DeviceFacade:
             view = self.deviceV2(**kwargs)
             if index is not None and view.count > 1:
                 view = self.deviceV2(**kwargs)[index]
-        except uiautomator2.JSONRPCError as e:
-            raise DeviceFacade.JsonRpcError(e)
+        except HTTPError as e:
+            raise DeviceFacade.HTTPError(e)
         return DeviceFacade.View(view=view, device=self.deviceV2)
 
     def back(self, modulable: bool = True):
@@ -245,8 +251,8 @@ class DeviceFacade:
         """return (width, height)"""
         try:
             self.deviceV2.window_size()
-        except uiautomator2.JSONRPCError as e:
-            raise DeviceFacade.JsonRpcError(e)
+        except HTTPError as e:
+            raise DeviceFacade.HTTPError(e)
 
     def swipe(self, direction: Direction, scale=0.5):
         """Swipe finger in the `direction`.
@@ -267,8 +273,8 @@ class DeviceFacade:
         try:
             self.deviceV2.swipe_ext(swipe_dir, scale=scale)
             DeviceFacade.sleep_mode(SleepTime.TINY)
-        except uiautomator2.JSONRPCError as e:
-            raise DeviceFacade.JsonRpcError(e)
+        except HTTPError as e:
+            raise DeviceFacade.HTTPError(e)
 
     def swipe_points(self, sx, sy, ex, ey, random_x=True, random_y=True):
         if random_x:
@@ -281,8 +287,8 @@ class DeviceFacade:
             logger.debug(f"Swipe from: ({sx},{sy}) to ({ex},{ey}).")
             self.deviceV2.swipe_points([[sx, sy], [ex, ey]], uniform(0.2, 0.5))
             DeviceFacade.sleep_mode(SleepTime.TINY)
-        except uiautomator2.JSONRPCError as e:
-            raise DeviceFacade.JsonRpcError(e)
+        except HTTPError as e:
+            raise DeviceFacade.HTTPError(e)
 
     def get_info(self):
         # {'currentPackageName': 'net.oneplus.launcher', 'displayHeight': 1920, 'displayRotation': 0, 'displaySizeDpX': 411,
@@ -290,8 +296,8 @@ class DeviceFacade:
         #  screenOn': True, 'sdkInt': 27, 'naturalOrientation': True}
         try:
             return self.deviceV2.info
-        except uiautomator2.JSONRPCError as e:
-            raise DeviceFacade.JsonRpcError(e)
+        except HTTPError as e:
+            raise DeviceFacade.HTTPError(e)
 
     @staticmethod
     def sleep_mode(mode):
@@ -321,68 +327,68 @@ class DeviceFacade:
                     for item in self.viewV2
                 )
                 return iter(children)
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
 
         def ui_info(self):
             try:
                 return self.viewV2.info
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
 
         def get_desc(self):
             try:
                 return self.viewV2.info["contentDescription"]
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
 
         def child(self, *args, **kwargs):
             try:
                 view = self.viewV2.child(*args, **kwargs)
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
             return DeviceFacade.View(view=view, device=self.deviceV2)
 
         def sibling(self, *args, **kwargs):
             try:
                 view = self.viewV2.sibling(*args, **kwargs)
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
             return DeviceFacade.View(view=view, device=self.deviceV2)
 
         def left(self, *args, **kwargs):
             try:
                 view = self.viewV2.left(*args, **kwargs)
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
             return DeviceFacade.View(view=view, device=self.deviceV2)
 
         def right(self, *args, **kwargs):
             try:
                 view = self.viewV2.right(*args, **kwargs)
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
             return DeviceFacade.View(view=view, device=self.deviceV2)
 
         def up(self, *args, **kwargs):
             try:
                 view = self.viewV2.up(*args, **kwargs)
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
             return DeviceFacade.View(view=view, device=self.deviceV2)
 
         def down(self, *args, **kwargs):
             try:
                 view = self.viewV2.down(*args, **kwargs)
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
             return DeviceFacade.View(view=view, device=self.deviceV2)
 
         def click_gone(self, maxretry=3, interval=1.0):
             try:
                 self.viewV2.click_gone(maxretry, interval)
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
 
         def click(self, mode=None, sleep=None, coord=None, crash_report_if_fails=True):
             if coord is None:
@@ -425,9 +431,9 @@ class DeviceFacade:
                     self.deviceV2.click(coord[0], coord[1])
                     DeviceFacade.sleep_mode(sleep)
                     return
-                except uiautomator2.JSONRPCError as e:
+                except HTTPError as e:
                     if crash_report_if_fails:
-                        raise DeviceFacade.JsonRpcError(e)
+                        raise DeviceFacade.HTTPError(e)
                     else:
                         logger.debug("Trying to press on a obj which is gone.")
 
@@ -455,9 +461,9 @@ class DeviceFacade:
                 )
                 DeviceFacade.sleep_mode(sleep)
 
-            except uiautomator2.JSONRPCError as e:
+            except HTTPError as e:
                 if crash_report_if_fails:
-                    raise DeviceFacade.JsonRpcError(e)
+                    raise DeviceFacade.HTTPError(e)
                 else:
                     logger.debug("Trying to press on a obj which is gone.")
 
@@ -515,8 +521,8 @@ class DeviceFacade:
                     random_x, random_y, duration=time_between_clicks
                 )
                 DeviceFacade.sleep_mode(SleepTime.DEFAULT)
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
 
         def scroll(self, direction):
             try:
@@ -524,8 +530,8 @@ class DeviceFacade:
                     self.viewV2.scroll.toBeginning(max_swipes=1)
                 else:
                     self.viewV2.scroll.toEnd(max_swipes=1)
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
 
         def fling(self, direction):
             try:
@@ -533,8 +539,8 @@ class DeviceFacade:
                     self.viewV2.fling.toBeginning(max_swipes=5)
                 else:
                     self.viewV2.fling.toEnd(max_swipes=5)
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
 
         def exists(self, ui_timeout=None, ignore_bug: bool = False) -> bool:
             try:
@@ -558,26 +564,26 @@ class DeviceFacade:
                     # More info about that: https://github.com/openatx/uiautomator2/issues/689"
                     return False
                 return exists
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
 
         def count_items(self) -> int:
             try:
                 return self.viewV2.count
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
 
         def wait(self, ui_timeout=Timeout.MEDIUM):
             try:
                 return self.viewV2.wait(timeout=self.get_ui_timeout(ui_timeout))
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
 
         def wait_gone(self, ui_timeout=None):
             try:
                 return self.viewV2.wait_gone(timeout=self.get_ui_timeout(ui_timeout))
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
 
         def is_above_this(self, obj2) -> Optional[bool]:
             obj1 = self.viewV2
@@ -587,14 +593,14 @@ class DeviceFacade:
                     return obj1.info["bounds"]["top"] < obj2.info["bounds"]["top"]
                 else:
                     return None
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
 
         def get_bounds(self) -> dict:
             try:
                 return self.viewV2.info["bounds"]
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
 
         def get_height(self) -> int:
             bounds = self.get_bounds()
@@ -607,15 +613,15 @@ class DeviceFacade:
         def get_property(self, prop: str):
             try:
                 return self.viewV2.info[prop]
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
 
         def is_scrollable(self):
             try:
                 if self.viewV2.exists():
                     return self.viewV2.info["scrollable"]
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
 
         @staticmethod
         def get_ui_timeout(ui_timeout: Timeout) -> int:
@@ -641,9 +647,9 @@ class DeviceFacade:
                 )
                 if text is not None:
                     return text
-            except uiautomator2.JSONRPCError as e:
+            except HTTPError as e:
                 if error:
-                    raise DeviceFacade.JsonRpcError(e)
+                    raise DeviceFacade.HTTPError(e)
                 else:
                     return ""
             logger.debug("Object exists but doesn't contain any text.")
@@ -657,8 +663,8 @@ class DeviceFacade:
                     "Object has disappeared! Probably too short video which has been liked!"
                 )
                 return True
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
 
         def set_text(self, text: str, mode: Mode = Mode.TYPE) -> None:
             punct_list = string.punctuation
@@ -708,10 +714,10 @@ class DeviceFacade:
                             f"Text typed in: {(datetime.now()-start).total_seconds():.2f}s"
                         )
                 DeviceFacade.sleep_mode(SleepTime.SHORT)
-            except uiautomator2.JSONRPCError as e:
-                raise DeviceFacade.JsonRpcError(e)
+            except HTTPError as e:
+                raise DeviceFacade.HTTPError(e)
 
-    class JsonRpcError(Exception):
+    class HTTPError(Exception):
         pass
 
     class AppHasCrashed(Exception):
