@@ -1,11 +1,11 @@
-colorama==0.4.4
+colorama==0.4.6
 ConfigArgParse==1.5.3
-PyYAML==6.0.1
-uiautomator2~=2.16.19
-urllib3==1.26.18
+PyYAML==6.0.2
+uiautomator2==3.2.8
+urllib3==2.3.0
 emoji==1.6.1
 langdetect==1.0.9
 atomicwrites==1.4.0
 spintax==1.0.4
-requests~=2.31.0
-packaging~=20.9
+requests==2.32.3
+packaging==24.2
