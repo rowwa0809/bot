@@ -1136,22 +1136,19 @@ class AccountView:
         return False
 
     def refresh_account(self):
-        textview = self.device.find(
-            resourceIdMatches=ResourceID.ROW_PROFILE_HEADER_TEXTVIEW_POST_CONTAINER
+        metrics_container = self.device.find(
+            resourceIdMatches=ResourceID.PROFILE_METRICS_CONTAINER
         )
         universal_actions = UniversalActions(self.device)
-        if textview.exists(Timeout.SHORT):
+        if metrics_container.exists(Timeout.SHORT):
             logger.info("Refresh account...")
             universal_actions._swipe_points(
                 direction=Direction.UP,
-                start_point_y=textview.get_bounds()["bottom"],
+                start_point_y=metrics_container.get_bounds()["bottom"],
                 delta_y=280,
             )
             random_sleep(modulable=False)
-        obj = self.device.find(
-            resourceIdMatches=ResourceID.ROW_PROFILE_HEADER_TEXTVIEW_POST_CONTAINER
-        )
-        if not obj.exists(Timeout.MEDIUM):
+        if not metrics_container.exists(Timeout.MEDIUM):
             logger.debug(
                 "Can't see Posts, Followers and Following after the refresh, maybe we moved a little bit bottom.. Swipe down."
             )
@@ -1497,33 +1494,14 @@ class ProfileView(ActionBarView):
 
     def _getSomeText(self) -> Tuple[Optional[str], Optional[str], Optional[str]]:
         """Get some text from the profile to check the language"""
-        obj = self.device.find(
-            resourceIdMatches=ResourceID.ROW_PROFILE_HEADER_TEXTVIEW_POST_CONTAINER
-        )
+
+        obj = self._getFollowersContainer()
         if not obj.exists(Timeout.MEDIUM):
             UniversalActions(self.device)._swipe_points(Direction.UP)
         try:
-            post = (
-                self.device.find(
-                    resourceIdMatches=ResourceID.ROW_PROFILE_HEADER_TEXTVIEW_POST_CONTAINER
-                )
-                .child(index=1)
-                .get_text()
-            )
-            followers = (
-                self.device.find(
-                    resourceIdMatches=ResourceID.ROW_PROFILE_HEADER_FOLLOWERS_CONTAINER
-                )
-                .child(index=1)
-                .get_text()
-            )
-            following = (
-                self.device.find(
-                    resourceIdMatches=ResourceID.ROW_PROFILE_HEADER_FOLLOWING_CONTAINER
-                )
-                .child(index=1)
-                .get_text()
-            )
+            post = self._getPostContainer().child(index=1).get_text()
+            followers = self._getFollowersContainer().child(index=1).get_text()
+            following = self._getFollowingContainer().child(index=1).get_text()
             return post.casefold(), followers.casefold(), following.casefold()
         except Exception as e:
             logger.debug(f"Exception: {e}")
@@ -1642,21 +1620,18 @@ class ProfileView(ActionBarView):
                 return None
         return int(value * multiplier)
 
-    def _getFollowersTextView(self):
-        followers_text_view = self.device.find(
-            resourceIdMatches=case_insensitive_re(
-                ResourceID.ROW_PROFILE_HEADER_TEXTVIEW_FOLLOWERS_COUNT
-            ),
-            className=ClassName.TEXT_VIEW,
+    def _getFollowersContainer(self):
+        followers_container = self.device.find(
+            resourceIdMatches=ResourceID.FOLLOWERS_CONTAINER,
         )
-        followers_text_view.wait(Timeout.MEDIUM)
-        return followers_text_view
+        followers_container.wait(Timeout.MEDIUM)
+        return followers_container
 
     def getFollowersCount(self) -> Optional[int]:
         followers = None
-        followers_text_view = self._getFollowersTextView()
-        if followers_text_view.exists():
-            followers_text = followers_text_view.get_text()
+        followers_count_obj = self._getFollowersContainer().child(index=0)
+        if followers_count_obj.exists():
+            followers_text = followers_count_obj.get_text()
             if followers_text:
                 followers = self._parseCounter(followers_text)
             else:
@@ -1666,21 +1641,18 @@ class ProfileView(ActionBarView):
 
         return followers
 
-    def _getFollowingTextView(self):
-        following_text_view = self.device.find(
-            resourceIdMatches=case_insensitive_re(
-                ResourceID.ROW_PROFILE_HEADER_TEXTVIEW_FOLLOWING_COUNT
-            ),
-            className=ClassName.TEXT_VIEW,
+    def _getFollowingContainer(self):
+        following_container = self.device.find(
+            resourceIdMatches=ResourceID.FOLLOWING_CONTAINER,
         )
-        following_text_view.wait(Timeout.MEDIUM)
-        return following_text_view
+        following_container.wait(Timeout.MEDIUM)
+        return following_container
 
     def getFollowingCount(self) -> Optional[int]:
         following = None
-        following_text_view = self._getFollowingTextView()
-        if following_text_view.exists(Timeout.MEDIUM):
-            following_text = following_text_view.get_text()
+        following_count_obj = self._getFollowingContainer().child(index=0)
+        if following_count_obj.exists(Timeout.MEDIUM):
+            following_text = following_count_obj.get_text()
             if following_text:
                 following = self._parseCounter(following_text)
             else:
@@ -1690,14 +1662,17 @@ class ProfileView(ActionBarView):
 
         return following
 
-    def getPostsCount(self) -> int:
-        post_count_view = self.device.find(
-            resourceIdMatches=case_insensitive_re(
-                ResourceID.ROW_PROFILE_HEADER_TEXTVIEW_POST_COUNT
-            )
+    def _getPostContainer(self):
+        post_container = self.device.find(
+            resourceIdMatches=ResourceID.POSTS_NUMBER_CONTAINER
         )
-        if post_count_view.exists(Timeout.MEDIUM):
-            count = post_count_view.get_text()
+        post_container.wait(Timeout.MEDIUM)
+        return post_container
+
+    def getPostsCount(self) -> int:
+        post_count_container = self._getPostContainer().child(index=0)
+        if post_count_container.exists(Timeout.MEDIUM):
+            count = post_count_container.get_text()
             if count is not None:
                 return self._parseCounter(count)
         logger.error("Cannot get posts count text.")

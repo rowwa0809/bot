@@ -135,15 +135,12 @@ class ResourceID:
         self.ROW_PROFILE_HEADER_EMPTY_PROFILE_NOTICE_TITLE = (
             f"{APP_ID}:id/row_profile_header_empty_profile_notice_title"
         )
-        self.ROW_PROFILE_HEADER_FOLLOWERS_CONTAINER = f"{APP_ID}:id/row_profile_header_followers_container|{APP_ID}:id/row_profile_header_container_followers"
-        self.ROW_PROFILE_HEADER_FOLLOWING_CONTAINER = f"{APP_ID}:id/row_profile_header_following_container|{APP_ID}:id/row_profile_header_container_following"
+
         self.ROW_PROFILE_HEADER_IMAGEVIEW = f"{APP_ID}:id/row_profile_header_imageview"
         self.ROW_PROFILE_HEADER_TEXTVIEW_FOLLOWERS_COUNT = (
             f"{APP_ID}:id/row_profile_header_textview_followers_count"
         )
-        self.ROW_PROFILE_HEADER_TEXTVIEW_POST_CONTAINER = (
-            f"{APP_ID}:id/row_profile_header_post_count_container"
-        )
+
         self.ROW_PROFILE_HEADER_TEXTVIEW_FOLLOWING_COUNT = (
             f"{APP_ID}:id/row_profile_header_textview_following_count"
         )
@@ -201,6 +198,13 @@ class ResourceID:
         )
         self.USER_LIST_CONTAINER = f"{self.FOLLOW_LIST_CONTAINER}|{self.ROW_USER_CONTAINER_BASE}|{self.RECOMMENDED_USER_ROW_CONTENT_IDENTIFIER}"
         self.SEARCH_ROW_ITEM = f"{self.ROW_SEARCH_USER_USERNAME}|{self.ROW_HASHTAG_TEXTVIEW_TAG_NAME}|{self.ROW_PLACE_TITLE}"
+
+        self.PROFILE_METRICS_CONTAINER = (
+            f"{APP_ID}:id/profile_header_metrics_full_width"
+        )
+        self.POSTS_NUMBER_CONTAINER = f"{APP_ID}:id/row_profile_header_post_count_container|{APP_ID}:id/row_profile_header_container_posts|{APP_ID}:id/profile_header_post_count_front_familiar"
+        self.FOLLOWERS_CONTAINER = f"{APP_ID}:id/row_profile_header_followers_container|{APP_ID}:id/row_profile_header_container_followers|{APP_ID}:id/profile_header_followers_stacked_familiar"
+        self.FOLLOWING_CONTAINER = f"{APP_ID}:id/row_profile_header_following_container|{APP_ID}:id/row_profile_header_container_following|{APP_ID}:id/profile_header_following_stacked_familiar"
 
         # android specific
         self.LIST = "android:id/list"
